@@ -9,11 +9,16 @@ an executable
 -- THESE ARE EXAMPLE CONFIGS FEEL FREE TO CHANGE TO WHATEVER YOU WANT
 
 -- general
+
+vim.opt.relativenumber = true
+vim.g.python3_host_prog = "/opt/homebrew/bin/python3"
+
+
 lvim.log.level = "warn"
 lvim.format_on_save.enabled = false
 lvim.colorscheme = "lunar"
 -- to disable icons and use a minimalist setup, uncomment the following
-lvim.use_icons = false
+lvim.use_icons = true
 
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = "space"
@@ -43,7 +48,7 @@ lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 --     ["<C-k>"] = actions.move_selection_previous,
 --   },
 -- }
-    -- subtitle = graphene.String()
+-- subtitle = graphene.String()
 -- Change theme settings
 -- lvim.builtin.theme.options.dim_inactive = true
 -- lvim.builtin.theme.options.style = "storm"
@@ -108,14 +113,20 @@ lvim.builtin.treesitter.highlight.enable = true
 
 -- ---configure a server manually. !!Requires `:LvimCacheReset` to take effect!!
 -- ---see the full default list `:lua print(vim.inspect(lvim.lsp.automatic_configuration.skipped_servers))`
+-- add `pyright` to `skipped_servers` list
+lvim.lsp.installer.setup.automatic_installation = false
+
+-- add `pyright` to `skipped_servers` list
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright" })
-local opts = {} -- check the lspconfig documentation for a list of all possible options
-require("lvim.lsp.manager").setup("pylsp", opts)
+-- remove `jedi_language_server` from `skipped_servers` list
+lvim.lsp.automatic_configuration.skipped_servers = vim.tbl_filter(function(server)
+  return server ~= "jedi_language_server"
+end, lvim.lsp.automatic_configuration.skipped_servers)
 
 -- ---remove a server from the skipped list, e.g. eslint, or emmet_ls. !!Requires `:LvimCacheReset` to take effect!!
 -- -- ---`:LvimInfo` lists which server(s) are skipped for the current filetype
 -- lvim.lsp.automatic_configuration.skipped_servers = vim.tbl_filter(function(server)
---   return server ~= "pyright" 
+--   return server ~= "pyright"
 -- end, lvim.lsp.automatic_configuration.skipped_servers)
 
 -- -- you can set a custom on_attach function that will be used for all the language servers
@@ -129,7 +140,22 @@ require("lvim.lsp.manager").setup("pylsp", opts)
 -- end
 
 -- -- set a formatter, this will override the language server formatting capabilities (if it exists)
+--
+local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+require('lspconfig')['jedi_language_server'].setup {
+  capabilities = capabilities
+}
+
+lvim.builtin.cmp.sources = {
+  { name = "nvim_lsp" },
+  { name = "luasnip" },
+  { name = "buffer" },
+  { name = "path" },
+}
+lvim.builtin.cmp.active = true
 lvim.lsp.installer.setup.automatic_servers_installation = false
+
+
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
   { command = "black", filetypes = { "python" } },
@@ -189,4 +215,3 @@ lvim.plugins = {
 --     -- let treesitter use bash highlight for zsh files as well
 --     require("nvim-treesitter.highlight").attach(0, "bash")
 --   end,
--- })
