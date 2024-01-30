@@ -12,7 +12,7 @@ an executable
 
 vim.opt.relativenumber = true
 vim.g.python3_host_prog = "/opt/homebrew/bin/python3"
-
+vim.opt.gdefault = true
 
 lvim.log.level = "warn"
 lvim.format_on_save.enabled = false
@@ -172,9 +172,11 @@ formatters.setup {
 }
 
 -- -- set additional linters
--- local linters = require "lvim.lsp.null-ls.linters"
--- linters.setup {
---   { command = "flake8", filetypes = { "python" } },
+local linters = require "lvim.lsp.null-ls.linters"
+linters.setup {
+  { command = "flake8", filetypes = { "python" } },
+  { command = "mypy",   filetypes = { "python" } },
+}
 --   {
 --     -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
 --     command = "shellcheck",
@@ -199,7 +201,7 @@ formatters.setup {
 --
 lvim.plugins = {
   {
-    "TaDaa/vimade",
+    "tpope/vim-surround",
   }
 }
 
@@ -215,3 +217,4 @@ lvim.plugins = {
 --     -- let treesitter use bash highlight for zsh files as well
 --     require("nvim-treesitter.highlight").attach(0, "bash")
 --   end,
+-- }).
