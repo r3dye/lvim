@@ -1,17 +1,6 @@
---[[
-lvim is the global options object
-
-Linters should be
-filled in as strings with either
-a global executable or a path to
-an executable
-]]
--- THESE ARE EXAMPLE CONFIGS FEEL FREE TO CHANGE TO WHATEVER YOU WANT
-
--- general
 
 vim.opt.relativenumber = true
-vim.g.python3_host_prog = "/opt/homebrew/bin/python3"
+vim.g.python3_host_prog = "/Users/michael/Library/Python/3.9"
 vim.opt.gdefault = true
 
 lvim.log.level = "warn"
@@ -119,9 +108,9 @@ lvim.lsp.installer.setup.automatic_installation = false
 -- add `pyright` to `skipped_servers` list
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright" })
 -- remove `jedi_language_server` from `skipped_servers` list
-lvim.lsp.automatic_configuration.skipped_servers = vim.tbl_filter(function(server)
-  return server ~= "jedi_language_server"
-end, lvim.lsp.automatic_configuration.skipped_servers)
+-- lvim.lsp.automatic_configuration.skipped_servers = vim.tbl_filter(function(server)
+  -- return server ~= "jedi_language_server"
+-- end, lvim.lsp.automatic_configuration.skipped_servers)
 
 -- ---remove a server from the skipped list, e.g. eslint, or emmet_ls. !!Requires `:LvimCacheReset` to take effect!!
 -- -- ---`:LvimInfo` lists which server(s) are skipped for the current filetype
@@ -145,6 +134,7 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protoc
 require('lspconfig')['jedi_language_server'].setup {
   capabilities = capabilities
 }
+require('lspconfig')['tailwindcss'].setup{}
 
 lvim.builtin.cmp.sources = {
   { name = "nvim_lsp" },
@@ -160,24 +150,23 @@ local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
   { command = "black", filetypes = { "python" } },
   { command = "isort", filetypes = { "python" } },
+  -- { command = "flake8", filetypes = { "python" } },
   {
-    -- each formatter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
     command = "prettier",
-    ---@usage arguments to pass to the formatter
-    -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
-    extra_args = { "--print-with", "100" },
-    ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
-    filetypes = { "typescript", "typescriptreact" },
+    filetypes = { "typescript", "typescriptreact", "javascript" },
   },
 }
 
--- -- set additional linters
 local linters = require "lvim.lsp.null-ls.linters"
 linters.setup {
-  { command = "flake8", filetypes = { "python" } },
-  { command = "mypy",   filetypes = { "python" } },
+  { command = "eslint", filetypes = { "typescript", "typescriptreact", "javascript" } }
 }
---   {
+-- -- set additional linters
+-- local linters = require "lvim.lsp.null-ls.linters"
+-- linters.setup {
+--   { command = "flake8", filetypes = { "python" } },
+--   { command = "mypy",   filetypes = { "python" } },
+-- }
 --     -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
 --     command = "shellcheck",
 --     ---@usage arguments to pass to the formatter
