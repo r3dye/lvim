@@ -1,6 +1,6 @@
 
 vim.opt.relativenumber = true
-vim.g.python3_host_prog = "/Users/michael/Library/Python/3.9"
+vim.g.python3_host_prog = ""
 vim.opt.gdefault = true
 
 lvim.log.level = "warn"
